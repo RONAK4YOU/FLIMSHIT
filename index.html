@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Itsflimshit| VFX & Filmmaking Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@400;700&display=swap');
+        
+        :root {
+            --primary: #1a1a1a;
+            --secondary: #0a0a0a;
+            --accent: #e50914;
+            --text-primary: rgba(255, 255, 255, 0.9);
+            --text-secondary: rgba(255, 255, 255, 0.6);
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        /* Film grain effect */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://.co/1920x1080?text=+');
+            pointer-events: none;
+            opacity: 0.02;
+            z-index: 100;
+            animation: grain 1s steps(10) infinite;
+        }
+        
+        @keyframes grain {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-5%, -10%); }
+            20% { transform: translate(-15%, 5%); }
+            30% { transform: translate(7%, -25%); }
+            40% { transform: translate(-5%, 25%); }
+            50% { transform: translate(-15%, 10%); }
+            60% { transform: translate(15%, 0%); }
+            70% { transform: translate(0%, 15%); }
+            80% { transform: translate(3%, 15%); }
+            90% { transform: translate(-10%, 10%); }
+        }
+        
+        /* Vertical video container */
+        .vertical-video-container {
+            position: relative;
+            width: 100%;
+            max-width: 340px; /* Optimal for vertical video */
+            margin: 0 auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            background: #000;
+            aspect-ratio: 9/16;
+        }
+        
+        .video-player {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 30%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 1.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .vertical-video-container:hover .video-overlay {
+            opacity: 1;
+        }
+        
+        /* Mobile-specific styles */
+        @media (max-width: 640px) {
+            .hero-title {
+                font-size: 2.5rem;
+                line-height: 1.2;
+            }
+            
+            .vertical-video-container {
+                width: 90%;
+                max-width: none;
+            }
+            
+            .project-card {
+                width: 100%;
+            }
+            
+            .reel-item {
+                min-width: 150px;
+            }
+            
+            nav {
+                padding: 0 1rem;
+            }
+            
+            nav a {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Touch interactions */
+        .video-overlay-mobile {
+            opacity: 1 !important;
+        }
+        
+        /* Film reel scroll */
+        .reel-container {
+            background: linear-gradient(90deg, var(--primary) 0%, rgba(26, 26, 26, 0) 10%, rgba(26, 26, 26, 0) 90%, var(--primary) 100%);
+        }
+        
+        .reel-scroll {
+            animation: reelScroll 60s linear infinite;
+        }
+        
+        @keyframes reelScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-50% - 2rem)); }
+        }
+        
+        /* Project card effects */
+        .project-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(229, 9, 20, 0.3);
+        }
+        
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(0deg, rgba(10, 10, 10, 0.9) 0%, transparent 50%);
+            transition: opacity 0.3s ease;
+            opacity: 0;
+        }
+        
+        .project-card:hover::before {
+            opacity: 1;
+        }
+        
+        .project-details {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateY(20px);
+            opacity: 0;
+        }
+        
+        .project-card:hover .project-details {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-black bg-opacity-90 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex-shrink-0">
+                    <h1 class="text-2xl font-bold tracking-tight text-white">
+                        <span class="text-red-600">ITS</span>FLIMSHIT
+                    </h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#work" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Work</a>
+                        <a href="#about" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
+                        <a href="#services" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Services</a>
+                        <a href="#contact" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Contact</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button class="mobile-menu-button p-2 text-gray-400 hover:text-white focus:outline-none">
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile menu -->
+        <div class="mobile-menu hidden md:hidden bg-black bg-opacity-95">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#work" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white">Work</a>
+                <a href="#about" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white">About</a>
+                <a href="#services" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white">Services</a>
+                <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 md:pt-40 md:pb-32 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row items-center gap-8">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <h1 class="hero-title text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                        Frame by Frame, <span class="text-red-600">Visual Magic</span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-gray-300 mb-8">
+                        Bringing cinematic visions to life through cutting-edge VFX and passionate filmmaking.
+                    </p>
+                    <a href="#work">
+                    <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105">
+                        Explore My Work
+                    </button>
+                    </a>
+                </div>
+                
+                <div class="md:w-1/2">
+                    <div class="vertical-video-container">
+                        <video autoplay muted loop class="video-player">
+                            <!-- Replace with your vertical video -->
+                            <source src="Comp 1_5.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="video-overlay video-overlay-mobile md:video-overlay-default">
+                            <h3 class="text-xl font-bold mb-2">Latest Project</h3>
+                            <p class="text-sm text-gray-300 mb-4">"Wrecked Waves, Unbroken Soul"</p>
+                            <a href="https://www.instagram.com/p/DLrMttjCDiQ/">
+                                    <button class="self-start bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-3 rounded-full transition-colors">
+                                        watch
+                                </button>
+                                </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Showcase Section -->
+    <section id="work" class="py-20 bg-black bg-opacity-50 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">
+                <span class="text-red-600">My</span> Portfolio
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Vertical Video 1 -->
+                <div class="vertical-video-container mx-auto md:mx-0">
+                    <video autoplay muted loop class="video-player">
+                        <source src="f as man .mp4" type="video/mp4">
+                    </video>
+                    <div class="video-overlay">
+                        <h3 class="text-lg font-bold mb-2"> Ghost Step</h3>
+                        <p class="text-xs text-gray-300 mb-2">"In and out before the world even reacts."</p>
+                    </div>
+                </div>
+                
+                <!-- Vertical Video 2 -->
+                <div class="vertical-video-container mx-auto md:mx-0">
+                    <video autoplay muted loop class="video-player">
+                        <source src="bof car.mp4" type="video/mp4">
+                    </video>
+                    <div class="video-overlay">
+                        <h3 class="text-lg font-bold mb-2">Blast Vision</h3>
+                        <p class="text-xs text-gray-300 mb-2">"Saw it coming. Let it burn."</p>
+                    </div>
+                </div>
+                
+                <!-- Vertical Video 3 -->
+                <div class="vertical-video-container mx-auto md:mx-0">
+                    <video autoplay muted loop class="video-player">
+                        <source src="UD_itsflimshit_3421489818784114948_67106659910_4_8_2025.mp4" type="video/mp4">
+                    </video>
+                    <div class="video-overlay">
+                        <h3 class="text-lg font-bold mb-2">Soft Glance</h3>
+                        <p class="text-xs text-gray-300 mb-2">" In every step, a story. In every glance, a spark."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Film Reel Section -->
+    <section class="py-16 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">
+                <span class="text-red-600">Pro</span>jects
+            </h2>
+            
+            <div class="reel-container px-4 md:px-8 overflow-hidden">
+                <div class="reel-scroll flex space-x-8">
+                    <div class="reel-item min-w-[200px] bg-gray-900 rounded-lg overflow-hidden">
+                        <div class="aspect-w-16 aspect-h-9">
+                            <img src="UD_ronaksuryawanshi9_3671583891747218698_44822831570_4_8_2025.jpg" alt="Sci-fi cityscape with neon lights and flying cars" class="object-cover w-full h-full">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold">FOCUS</h3>
+                            <p class="text-xs text-gray-400">Stay Sharp</p>
+                        </div>
+                    </div>
+                    
+                    <div class="reel-item min-w-[200px] bg-gray-900 rounded-lg overflow-hidden">
+                        <div class="aspect-w-16 aspect-h-9">
+                            <img src="UD_woprohit_3680050519340865228_69517403083_4_8_2025.jpg" alt="Ancient castle ruins surrounded by mystical fog" class="object-cover w-full h-full">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold">FORGOTTEN REALMS</h3>
+                            <p class="text-xs text-gray-400">Concept Art</p>
+                        </div>
+                    </div>
+                    
+                    <div class="reel-item min-w-[200px] bg-gray-900 rounded-lg overflow-hidden">
+                        <div class="aspect-w-16 aspect-h-9">
+                            <img src="UD_woprohit_3680050520448141356_69517403083_4_8_2025.jpg" alt="Post-apocalyptic desert wasteland with lone survivor" class="object-cover w-full h-full">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold">FOMO</h3>
+                            <p class="text-xs text-gray-400">Trapped Emotion</p>
+                        </div>
+                    </div>
+                    
+<div class="reel-item min-w-[200px] bg-gray-900 rounded-lg overflow-hidden">
+                        <div class="aspect-w-16 aspect-h-9">
+                            <img src="rohit.png" alt="Underwater scene with diver exploring coral reef" class="object-cover w-full h-full">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold">Sha’laane</h3>
+                            <p class="text-xs text-gray-400">I guess</p>
+                        </div>
+                    </div>
+
+                    <div class="reel-item min-w-[200px] bg-gray-900 rounded-lg overflow-hidden">
+                        <div class="aspect-w-16 aspect-h-9">
+                            <img src="2d.jpg" alt="Underwater scene with diver exploring coral reef" class="object-cover w-full h-full">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold">ABOVE ALL</h3>
+                            <p class="text-xs text-gray-400">Sky Dreams</p>
+                        </div>
+                    </div>
+                    
+                    <div class="reel-item min-w-[200px] bg-gray-900 rounded-lg overflow-hidden">
+                        <div class="aspect-w-16 aspect-h-9">
+                            <img src="gf.png.gif" alt="Cyberpunk street market at night with glowing signs" class="object-cover w-full h-full">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold">PEACE MODE</h3>
+                            <p class="text-xs text-gray-400">Still Sky</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Duplicate items for seamless looping -->
+                    <div class="reel-item min-w-[200px] bg-gray-900 rounded-lg overflow-hidden">
+                        <div class="aspect-w-16 aspect-h-9">
+                            <img src="ronak(1).png" alt="Sci-fi cityscape with neon lights and flying cars" class="object-cover w-full h-full">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold">TOP FLOOR</h3>
+                            <p class="text-xs text-gray-400">No lift needed ,I rise my way.</p>
+                        </div>
+                        
+                    </div>
+                    <div class="reel-item min-w-[200px] bg-gray-900 rounded-lg overflow-hidden">
+                        <div class="aspect-w-16 aspect-h-9">
+                            <img src="UD_woprohit_3680050519340865228_69517403083_4_8_2025.jpg" alt="Ancient castle ruins surrounded by mystical fog" class="object-cover w-full h-full">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold">FORGOTTEN REALMS</h3>
+                            <p class="text-xs text-gray-400">Concept Art</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+    </section>
+
+
+    
+
+    <!-- Project Grid -->
+    <section class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">
+                <span class="text-red-600">Featured</span> Works
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Project 1 -->
+                <div class="project-card relative rounded-lg overflow-hidden h-96">
+                    <img src="rohit.png" alt="High-tech laboratory with scientists working on holographic interface" class="w-full h-full object-cover">
+                    <div class="project-details absolute bottom-0 left-0 p-6 w-full">
+                        <h3 class="text-xl font-bold mb-2">Sha’laane</h3>
+                        <p class="text-sm text-gray-300 mb-4">I guess </p>
+                    </a href=" ">
+                        <button class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 px-4 rounded-full transition-colors">
+                            View Breakdown
+                        </button>
+                    </a>
+                    </div>
+                </div>
+                
+                <!-- Project 2 -->
+                <div class="project-card relative rounded-lg overflow-hidden h-96">
+                    <img src="UD_woprohit_3680050519340865228_69517403083_4_8_2025.jpg" alt="Battle scene with medieval knights and mythical creatures" class="w-full h-full object-cover">
+                    <div class="project-details absolute bottom-0 left-0 p-6 w-full">
+                        <h3 class="text-xl font-bold mb-2">Age of Legends</h3>
+                        <p class="text-sm text-gray-300 mb-4">Moody close-up poster — bold eyes, dripping text, and haunting vibes</p>
+                        <a href="https://www.instagram.com/p/DMSKnqNzLsD/?img_index=3">
+  <button class="self-start bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-3 rounded-full transition-colors">
+      Check out 
+  </button>
+</a>
+                    </div>
+                </div>
+                
+                <!-- Project 3 -->
+                <div class="project-card relative rounded-lg overflow-hidden h-96">
+                    <img src="UD_woprohit_3680050520448141356_69517403083_4_8_2025.jpg" alt="Surreal dreamscape with floating islands and distorted perspective" class="w-full h-full object-cover">
+                    <div class="project-details absolute bottom-0 left-0 p-6 w-full">
+                        <h3 class="text-xl font-bold mb-2">Dream Construct</h3>
+                        <p class="text-sm text-gray-300 mb-4">Dark, surreal poster capturing FOMO with bold red tones and haunting visuals.</p>
+                    <a href="https://www.instagram.com/p/DMSKnqNzLsD/?img_index=3">
+  <button class="self-start bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-3 rounded-full transition-colors">
+      Check out 
+      </a>
+  </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-black bg-opacity-50 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <div class="relative rounded-lg overflow-hidden h-96">
+                        <img src="my img 3.jpg" alt="Filmmaker working in studio with cinema camera and lighting equipment" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-80"></div>
+                        <div class="absolute bottom-0 left-0 p-6">
+                            <h3 class="text-xl font-bold">Founder – ItsFlimShit </h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="md:w-1/2">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-6">
+                        Ronak <span class="text-red-600">Suryawanshi</span>
+                    </h2>
+                    <p class="text-gray-300 mb-6">
+                        Over 2 years of experience in professional video editing, specializing in cinematic visuals, narrative-driven edits, and light VFX. Worked with various media agencies delivering high-quality content using Premiere Pro, After Effects, and other tools.                    </p>
+                    <p class="text-gray-300 mb-6">
+                        Skilled in After Effects and Premiere Pro, I’ve collaborated with multiple media agencies to deliver compelling edits for music videos, promos, and more.                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <span class="px-4 py-2 bg-gray-800 rounded-full text-sm">After Effects</span>
+                        <span class="px-4 py-2 bg-gray-800 rounded-full text-sm">Premiere pro </span>
+                        <span class="px-4 py-2 bg-gray-800 rounded-full text-sm">Blender</span>
+                        <span class="px-4 py-2 bg-gray-800 rounded-full text-sm">Photoshop</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">
+                 <span class="text-red-600"> this section not working right now </span> use this email @itsflimshit.com
+            </h2>
+            
+            <form id="contact-form" class="space-y-6">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-300 mb-1">Name</label>
+                        <input type="text" id="name" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                        <input type="email" id="email" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="project" class="block text-sm font-medium text-gray-300 mb-1">Project Type</label>
+                    <select id="project" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600">
+                        <option>Commercial</option>
+                        <option>Feature Film</option>
+                        <option>Short Film</option>
+                        <option>Music Video</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="message" class="block text-sm font-medium text-gray-300 mb-1">Message</label>
+                    <textarea id="message" rows="4" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"></textarea>
+                </div>
+                
+                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">
+                    Send Message
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 bg-black bg-opacity-90 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <h2 class="text-2xl font-bold tracking-tight text-white">
+                        <span class="text-red-600">ITS</span>FLIMSHIT
+                    </h2>
+                    <p class="text-gray-400 mt-2">Visual storytelling at its finest</p>
+                </div>
+                
+                <div class="flex space-x-6">
+                    <a href="https://www.instagram.com/itsflimshit/" class="text-gray-400 hover:text-white">
+                        <span class="sr-only">Instagram</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd"></path>
+                        </svg>
+                    </a>
+                    <a href="https://x.com/itsflimshit" class="text-gray-400 hover:text-white">
+                        <span class="sr-only">Twitter</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <span class="sr-only">Vimeo</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M23.977 6.416c-.105 2.338-1.739 5.543-4.894 9.609-3.268 4.247-6.026 6.37-8.29 6.37-1.409 0-2.578-1.294-3.553-3.881L5.322 8.198c-.632-2.251-1.301-3.375-1.997-3.375-.156 0-.709.319-1.61.956L0 3.52c.953-.74 1.895-1.516 2.827-2.306 1.204-.982 2.105-1.5 2.7-1.552.707-.067 1.144.397 1.314 1.394.185 1.115.447 2.433.784 3.957.578 2.459 1.002 3.763 1.27 3.91.42.227.759-.275 1.014-1.508.322-1.683.473-2.708.453-3.076-.034-.717-.404-1.08-1.112-1.091-.281-.008-.605.061-.979.187-.7.233-1.13.354-1.293.354-.433 0-.814-1.147-1.142-3.441-.208-1.472.01-2.658.637-3.564.8-1.131 1.976-1.706 3.531-1.729C8.785.958 9.43 2.15 9.986 3.444c1.618 3.49 2.75 5.644 3.385 6.463.633.814 1.164 1.225 1.592 1.225.447 0 1.011-.505 1.69-1.512.679-1.011 1.042-1.78 1.088-2.317.096-.991-.284-1.491-1.14-1.491-.407 0-.819.087-1.239.255-.945.363-1.706.547-2.285.547-.726 0-1.274-.245-1.649-.731-.248-.31-.368-.919-.364-1.823.012-1.598.883-2.886 2.62-3.868 1.63-.914 2.811-1.294 3.553-1.138 1.09.235 1.607 1.026 1.549 2.368z"></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <span class="sr-only">IMDb</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M9.229 14.143V4.999h1.873v9.144H9.229zm12.105-4.143v2.857c0 1.948-.24 3.114-1.764 3.114-.927 0-1.754-.631-1.967-1.696h-.09c-.246.834-.966 1.696-1.968 1.696-1.015 0-1.754-.631-1.754-2.037v-1.377l.104-1.6h-2.145l-.181 2.144v6.19h1.967v-4.89c0-.547.194-.938.662-.938.456 0 .668.283.668.93v4.898h1.967v-5.01c0-.547.236-.919.682-.919.464 0 .652.283.652.93v4.898h1.968v-5.412c0-1.233-.752-1.864-1.75-1.864-.946 0-1.704.3-1.954 1.63h-.063v-1.313h8.822zm-15.048-3.38v3.19h-1.231V5.999h1.231v.62h.078c.222-.655.618-.829 1.178-.829 1.217 0 1.77.81 1.77 2.297v1.542c0 1.48-.553 2.298-1.77 2.298-.56 0-.956-.175-1.178-.83h-.078V15h-1.966V6.62h1.966zm0 3.096h.047c.221.478.412.633.768.633.398 0 .662-.35.662-.962v-1.54c0-.612-.271-.962-.662-.962-.363 0-.554.155-.768.633h-.047v1.198z"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="mt-12 pt-8 border-t border-gray-800 text-center">
+                <p class="text-sm text-gray-400">&copy; FLIMSHIT. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    
+<script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.querySelector('.mobile-menu-button');
+        const mobileMenu = document.querySelector('.mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Detect touch devices
+        function isTouchDevice() {
+            return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+        }
+        
+        // Add video overlay-mobile class on touch devices
+        if (isTouchDevice()) {
+            document.querySelectorAll('.video-overlay').forEach(overlay => {
+                overlay.classList.add('video-overlay-mobile');
+            });
+        }
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+    </script>
+  
+ 
+</body>
+</html>
