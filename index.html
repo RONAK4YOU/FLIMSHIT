@@ -86,7 +86,8 @@
             justify-content: flex-end;
             padding: 1.5rem;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: opacity;
         }
         
         .vertical-video-container:hover .video-overlay {
@@ -131,6 +132,8 @@
         /* Film reel scroll */
         .reel-container {
             background: linear-gradient(90deg, var(--primary) 0%, rgba(26, 26, 26, 0) 10%, rgba(26, 26, 26, 0) 90%, var(--primary) 100%);
+            touch-action: pan-y;
+            cursor: grab;
         }
         
         .reel-scroll {
@@ -142,10 +145,19 @@
             100% { transform: translateX(calc(-50% - 2rem)); }
         }
         
+        .reel-container.dragging {
+            cursor: grabbing;
+            user-select: none;
+        }
+        
+        /* Drag wrapper holds user-controlled offset while inner keeps animating */
+        .reel-drag-wrapper { will-change: transform; }
+        
         /* Project card effects */
         .project-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
             transform-style: preserve-3d;
+            will-change: transform, box-shadow;
         }
         
         .project-card:hover {
@@ -161,7 +173,7 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(0deg, rgba(10, 10, 10, 0.9) 0%, transparent 50%);
-            transition: opacity 0.3s ease;
+            transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
             opacity: 0;
         }
         
@@ -170,9 +182,17 @@
         }
         
         .project-details {
-            transition: opacity 0.3s ease, transform 0.3s ease;
+            transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1), transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
             transform: translateY(20px);
             opacity: 0;
+            will-change: transform, opacity;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reel-scroll { animation: none; }
+            .project-card, .project-card::before, .project-details, .video-overlay {
+                transition: none !important;
+            }
         }
         
         .project-card:hover .project-details {
@@ -312,6 +332,7 @@
             </h2>
             
             <div class="reel-container px-4 md:px-8 overflow-hidden">
+                <div class="reel-drag-wrapper">
                 <div class="reel-scroll flex space-x-8">
                     <div class="reel-item min-w-[200px] bg-gray-900 rounded-lg overflow-hidden">
                         <div class="aspect-w-16 aspect-h-9">
@@ -393,6 +414,7 @@
                             <p class="text-xs text-gray-400">Concept Art</p>
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
         </div>
@@ -493,25 +515,25 @@
     <section id="contact" class="py-20 px-4">
         <div class="max-w-4xl mx-auto">
             <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">
-                 <span class="text-red-600"> this section not working right now </span> use this email @itsflimshit.com
+                 <span class="text-red-600">Contact</span> Me
             </h2>
             
-            <form id="contact-form" class="space-y-6">
+            <form id="contact-form" class="space-y-6" novalidate>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label for="name" class="block text-sm font-medium text-gray-300 mb-1">Name</label>
-                        <input type="text" id="name" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600">
+                        <input type="text" id="name" name="name" required class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600" placeholder="Your name">
                     </div>
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
-                        <input type="email" id="email" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600">
+                        <input type="email" id="email" name="email" required class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600" placeholder="you@example.com">
                     </div>
                 </div>
                 
                 <div>
                     <label for="project" class="block text-sm font-medium text-gray-300 mb-1">Project Type</label>
-                    <select id="project" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600">
+                    <select id="project" name="project" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600">
                         <option>Commercial</option>
                         <option>Feature Film</option>
                         <option>Short Film</option>
@@ -522,12 +544,13 @@
                 
                 <div>
                     <label for="message" class="block text-sm font-medium text-gray-300 mb-1">Message</label>
-                    <textarea id="message" rows="4" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"></textarea>
+                    <textarea id="message" name="message" rows="4" required class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600" placeholder="Tell me about your project..."></textarea>
                 </div>
                 
-                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">
+                <button type="submit" id="contact-submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">
                     Send Message
                 </button>
+                <p id="contact-feedback" class="text-center text-sm text-gray-400"></p>
             </form>
         </div>
     </section>
@@ -579,6 +602,116 @@
 
     
 <script>
+        // No-pause drag: keep auto-scroll animation running; apply additive drag offset on wrapper
+        (function enableReelNoPauseDrag() {
+            const reelContainer = document.querySelector('.reel-container');
+            const wrapper = document.querySelector('.reel-drag-wrapper');
+            if (!reelContainer || !wrapper) return;
+
+            let isDragging = false;
+            let startX = 0;
+            let startOffset = 0;
+            let currentOffset = 0;
+
+            const setOffset = (x) => {
+                currentOffset = x;
+                wrapper.style.transform = `translateX(${currentOffset}px)`;
+            };
+
+            const onDown = (clientX) => {
+                isDragging = true;
+                reelContainer.classList.add('dragging');
+                startX = clientX;
+                startOffset = currentOffset;
+            };
+
+            const onMove = (clientX) => {
+                if (!isDragging) return;
+                const delta = clientX - startX;
+                setOffset(startOffset + delta);
+            };
+
+            const onUp = () => {
+                if (!isDragging) return;
+                isDragging = false;
+                reelContainer.classList.remove('dragging');
+            };
+
+            // Mouse
+            reelContainer.addEventListener('mousedown', (e) => onDown(e.clientX));
+            window.addEventListener('mousemove', (e) => onMove(e.clientX));
+            window.addEventListener('mouseup', onUp);
+
+            // Touch
+            reelContainer.addEventListener('touchstart', (e) => {
+                if (e.touches && e.touches[0]) onDown(e.touches[0].clientX);
+            }, { passive: true });
+            reelContainer.addEventListener('touchmove', (e) => {
+                if (e.touches && e.touches[0]) onMove(e.touches[0].clientX);
+            }, { passive: true });
+            reelContainer.addEventListener('touchend', onUp, { passive: true });
+            reelContainer.addEventListener('touchcancel', onUp, { passive: true });
+        })();
+
+        // Contact form submission via FormSubmit (serverless)
+        // Sends email to itsflimshit@gmail.com without exposing credentials
+        const contactForm = document.getElementById('contact-form');
+        const contactSubmitBtn = document.getElementById('contact-submit');
+        const contactFeedback = document.getElementById('contact-feedback');
+
+        function setSubmitting(isSubmitting) {
+            if (!contactSubmitBtn) return;
+            contactSubmitBtn.disabled = isSubmitting;
+            contactSubmitBtn.textContent = isSubmitting ? 'Sending…' : 'Send Message';
+        }
+
+        if (contactForm) {
+            contactForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const project = document.getElementById('project').value;
+                const message = document.getElementById('message').value.trim();
+
+                if (!name || !email || !message) {
+                    contactFeedback.textContent = 'Please fill in your name, email, and message.';
+                    contactFeedback.className = 'text-center text-sm text-red-400';
+                    return;
+                }
+
+                setSubmitting(true);
+                contactFeedback.textContent = '';
+
+                try {
+                    const formEndpoint = 'https://formsubmit.co/ajax/itsflimshit@gmail.com';
+                    const resp = await fetch(formEndpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                        body: JSON.stringify({
+                            name,
+                            email,
+                            project,
+                            message,
+                            _subject: `New contact from ${name} (${project})`,
+                            _template: 'table'
+                        })
+                    });
+
+                    if (!resp.ok) throw new Error('Failed to send');
+
+                    contactFeedback.textContent = 'Thanks! Your message has been sent.';
+                    contactFeedback.className = 'text-center text-sm text-green-400';
+                    contactForm.reset();
+                } catch (err) {
+                    contactFeedback.textContent = 'Sorry, something went wrong. Please email directly: itsfilmshit@gmail.com';
+                    contactFeedback.className = 'text-center text-sm text-red-400';
+                } finally {
+                    setSubmitting(false);
+                }
+            });
+        }
+
         // Mobile menu toggle
         const mobileMenuButton = document.querySelector('.mobile-menu-button');
         const mobileMenu = document.querySelector('.mobile-menu');
